@@ -8,8 +8,8 @@ Reference Manual
 
    foreword
    introduction
-   overview_conventions/index
-   vtl_dl_rulesets/index
+   #overview_conventions/index
+   #vtl_dl_rulesets/index
    vtl_dl_udo
    typical_behaviour
    operators/index
