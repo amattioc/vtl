@@ -5,6 +5,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 VERSION = "2.1"
+BRANCH = "docs-dev"
 
 
 def name_norm(value):
@@ -16,14 +17,18 @@ extensions = [
     "sphinxcontrib.mermaid",
     "sphinxcontrib.plantuml",
     "rst2pdf.pdfbuilder",
-    "sphinx_toolbox.collapse",
+    "sphinx_toolbox.collapse"
 ]
 pdf_documents = [
     ("index", f"VTL_{VERSION}_DOCS", f"VTL {VERSION} DOCS", "SDMX-TWG"),
 ]
-exclude_patterns = ["*intro.rst", "pandocTranslation*"]
+exclude_patterns = [
+    "*intro.rst",
+    "pandocTranslation*",]
+
+
 html_theme_options = {
-    "navigation_depth": 3,
+    "navigation_depth": 5,
     "collapse_navigation": False,
 }
 html_context = {
@@ -34,6 +39,7 @@ html_context = {
     "conf_py_path": f"/v{VERSION}/docs/",  # Path in the checkout to the docs root
 }
 
+
 # Load templates
 jinjaEnv = Environment(loader=FileSystemLoader(searchpath="templates"))
 jinjaEnv.filters["name_norm"] = name_norm
@@ -42,14 +48,14 @@ for template in next(os.walk("templates"))[2]:
     templates[template] = jinjaEnv.get_template(template)
 
 # Apply templates in each op type folder
-for op_type in next(os.walk("operators"))[1]:
-    op_type_path = Path("operators").joinpath(op_type)
+for op_type in next(os.walk("reference_manual/operators"))[1]:
+    op_type_path = Path("reference_manual/operators").joinpath(op_type)
     # Apply templates in each op folder
     for op_folder in next(os.walk(op_type_path))[1]:
-        # Write the op main page
         op_path = op_type_path.joinpath(op_folder)
-        with open(op_path.joinpath("index.rst"), "w") as f:
-            f.write(templates["operator"].render({"title": op_folder}))
+        # # Write the op main page
+        # with open(op_path.joinpath("index.rst"), "w") as f:
+        #     f.write(templates["operator"].render({"title": op_folder}))
 
         # Write the op examples
         examples_folder = op_path.joinpath("examples")
@@ -68,18 +74,20 @@ for op_type in next(os.walk("operators"))[1]:
         for i in range(len(ex_list)):
             examples.append({"folder": examples_folder, "i": i + 1, "name": ex_list[i]})
 
-        with open(op_path.joinpath("examples.rst"), "w") as f:
-            f.write(
-                templates["examples"].render(
-                    {
-                        "examples": examples,
-                        "inputs": inputs,
-                        "op_type": op_type,
-                        "repourl_ex": f"https://github.com/sdmx-twg/vtl/blob/master/v{VERSION}/docs",
-                    }
-                )
+        examples_text = templates["examples"].render(
+                {
+                    "examples": examples,
+                    "inputs": inputs,
+                    "op_type": op_type,
+                    "repourl_ex": f"https://github.com/sdmx-twg/vtl/blob/{BRANCH}/v{VERSION}/docs",
+                }
             )
+        if examples_folder.joinpath("end_text.rst").exists():
+            examples_text += """.. include:: examples/end_text.rst"""
+        with open(op_path.joinpath("examples.rst"), "w") as f:
+            f.write(examples_text)
 
-plantuml = (
-    "java -jar " + os.getenv("PUML_PATH", "/tmp/plantuml-mit-1.2023.13.jar") + " -tpng"
-)
+
+
+# TODO: Uncomment this for UML Diagrams (User Manual), we do not have the necessary files
+plantuml = "java -jar " + os.getenv("PUML_PATH", "/tmp/plantuml-mit-1.2023.13.jar") + " -tpng"
