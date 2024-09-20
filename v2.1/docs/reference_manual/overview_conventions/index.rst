@@ -11,6 +11,6 @@ Overwiew of the language and conventions
    abbreviations
    conventions_operators_syntax
    description_data_types
-   vtl_ml_operators
+   #vtl_ml_operators
    evaluation_order
    description_operators
