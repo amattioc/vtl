@@ -3,7 +3,7 @@ Documentation for VTL v2.1
 ***************************
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    user_manual/index
    reference_manual/index
