@@ -86,7 +86,7 @@ for op_type in next(os.walk("reference_manual/operators"))[1]:
                     "examples": examples,
                     "inputs": inputs,
                     "op_type": op_type,
-                    "repourl_ex": f"https://github.com/sdmx-twg/vtl/blob/master/v{VERSION}/docs",
+                    "repourl_ex": f"https://github.com/amattioc/vtl/blob/master/v{VERSION}/docs",
                 }
             )
         if examples_folder.joinpath("end_text.rst").exists():
